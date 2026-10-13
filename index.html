@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Pac-Man Lanches — hambúrgueres artesanais com qualidade, sabor e entrega pelo WhatsApp.">
+<meta name="theme-color" content="#0b1230">
+<title>Pac-Man Lanches – Cardápio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#070d24;
+  --bg-2:#0b1230;
+  --panel:#101d44;
+  --panel-2:#16255a;
+  --line:#2c3f7a;
+  --gold:#e4c06a;
+  --yel:#ffd21f;
+  --red:#d63b32;
+  --tx:#f6f2e6;
+  --mut:#aab4d8;
+  --wa:#25d366;
+  --radius:clamp(14px,2vw,20px);
+  --shadow:0 18px 50px rgba(0,0,0,.35);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --space:clamp(16px,4vw,32px);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(76px + var(--safe-top));
+  -webkit-text-size-adjust:100%;
+}
+body{
+  margin:0;
+  min-height:100svh;
+  background:
+    radial-gradient(900px 500px at 85% -10%, rgba(255,210,31,.13), transparent 60%),
+    radial-gradient(700px 500px at -10% 20%, rgba(214,59,50,.16), transparent 55%),
+    linear-gradient(180deg,var(--bg),var(--bg-2));
+  color:var(--tx);
+  font-family:Nunito,system-ui,-apple-system,sans-serif;
+  font-size:clamp(15px,.35vw + 14px,17px);
+  line-height:1.55;
+  padding-top:var(--safe-top);
+  padding-bottom:var(--safe-bottom);
+  overflow-x:hidden;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+button{font:inherit}
+
+.skip-link{
+  position:absolute;left:12px;top:-80px;z-index:100;
+  background:var(--yel);color:#1a1300;font-weight:800;
+  padding:12px 18px;border-radius:999px;text-decoration:none;
+  transition:top .25s ease;
+}
+.skip-link:focus{top:calc(12px + var(--safe-top))}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:8px}
+
+/* Topbar */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(14px);
+  background:rgba(7,13,36,.8);
+  border-bottom:1px solid rgba(228,192,106,.18);
+}
+.topbar-inner{
+  width:min(100%,1180px);
+  margin:auto;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:clamp(10px,2vw,16px) var(--space);
+}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;color:var(--yel);
+  font-family:'Bowlby One',Impact,sans-serif;
+  font-size:clamp(.95rem,2.4vw,1.2rem);
+  letter-spacing:.4px;
+  min-width:0;
+}
+.brand span:last-child{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.brand-mark{
+  width:clamp(30px,6vw,40px);
+  height:clamp(30px,6vw,40px);
+  border-radius:50%;flex:none;position:relative;
+  background:conic-gradient(from 0deg,var(--yel) 0 300deg,transparent 300deg 360deg);
+  box-shadow:0 0 0 3px rgba(255,210,31,.25),0 8px 20px rgba(0,0,0,.4);
+  animation:spin 7s linear infinite;
+}
+.brand-mark::after{
+  content:"";position:absolute;right:16%;top:30%;
+  width:14%;height:14%;border-radius:50%;background:var(--bg);
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.nav{display:flex;gap:6px}
+.nav a{
+  text-decoration:none;color:var(--mut);font-weight:700;
+  font-size:clamp(.82rem,1.5vw,.95rem);
+  padding:10px 14px;border-radius:999px;
+  min-height:44px;display:inline-flex;align-items:center;
+  transition:.25s ease;
+}
+.nav a:hover,.nav a:focus-visible{color:#1a1300;background:var(--yel)}
+
+/* Hero fluido */
+.hero{
+  width:min(100%,1180px);
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+  align-items:center;
+  gap:clamp(28px,5vw,56px);
+  padding:clamp(40px,8vw,88px) var(--space) clamp(32px,6vw,64px);
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,210,31,.12);
+  border:1px solid rgba(255,210,31,.35);
+  color:var(--yel);font-weight:800;
+  font-size:clamp(.72rem,1.6vw,.88rem);
+  padding:7px 14px;border-radius:999px;margin-bottom:16px;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--yel);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35;transform:scale(.8)}}
+
+.hero h1{
+  font-family:'Bowlby One',Impact,sans-serif;font-weight:400;
+  font-size:clamp(2.2rem,8vw,5rem);
+  line-height:.98;margin:0 0 16px;color:var(--yel);
+  text-shadow:clamp(2px,.5vw,4px) clamp(2px,.5vw,4px) 0 var(--red),
+              calc(clamp(2px,.5vw,4px) * 2) calc(clamp(2px,.5vw,4px) * 2) 0 rgba(0,0,0,.35);
+  overflow-wrap:break-word;
+}
+.hero p{
+  font-size:clamp(1rem,2.4vw,1.18rem);
+  color:var(--mut);max-width:46ch;margin:0 0 26px;
+}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:48px;
+  background:linear-gradient(135deg,var(--yel),#ffdf6b);
+  color:#1a1300;font-weight:800;text-decoration:none;
+  padding:14px clamp(18px,3vw,26px);
+  border-radius:999px;border:0;cursor:pointer;
+  font-size:clamp(.92rem,1.8vw,1rem);
+  box-shadow:0 12px 30px rgba(255,210,31,.22);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(255,210,31,.3)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.ghost{
+  background:transparent;color:var(--tx);
+  border:1px solid rgba(246,242,230,.25);box-shadow:none;
+}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold);box-shadow:none}
+
+.hero-visual{position:relative;display:grid;place-items:center}
+.hero-photo{
+  width:min(100%,430px);
+  aspect-ratio:1;object-fit:cover;border-radius:50%;
+  border:clamp(3px,.8vw,5px) solid var(--gold);
+  box-shadow:var(--shadow),0 0 0 clamp(8px,2.5vw,18px) rgba(228,192,106,.08);
+  animation:float 6s ease-in-out infinite;
+}
+@keyframes float{50%{transform:translateY(-14px)}}
+.badge{
+  position:absolute;background:var(--panel);
+  border:1px solid var(--line);
+  padding:9px 14px;border-radius:999px;
+  font-weight:800;font-size:clamp(.72rem,1.7vw,.9rem);
+  box-shadow:var(--shadow);white-space:nowrap;
+}
+.badge.one{left:0;top:10%;color:var(--yel);animation:float 5s ease-in-out infinite}
+.badge.two{right:0;bottom:8%;color:#9ff3b6;animation:float 6.5s ease-in-out infinite reverse}
+
+.dots{
+  height:14px;margin:0 var(--space);
+  background:radial-gradient(circle,var(--gold) 3px,transparent 3.6px) 0 50%/30px 14px repeat-x;
+  opacity:.55;
+}
+
+/* Main */
+main{
+  width:min(100%,1180px);
+  margin:auto;
+  padding:clamp(34px,6vw,64px) var(--space) clamp(70px,10vw,110px);
+}
+.section-head{
+  display:flex;flex-wrap:wrap;align-items:end;
+  justify-content:space-between;gap:16px;margin-bottom:22px;
+}
+h2{
+  font-family:'Bowlby One',Impact,sans-serif;font-weight:400;
+  font-size:clamp(1.65rem,5vw,2.5rem);
+  margin:0;color:var(--gold);
+}
+.section-head p{margin:6px 0 0;color:var(--mut);font-size:clamp(.95rem,2vw,1.05rem)}
+
+.toolbar{
+  display:grid;
+  grid-template-columns:minmax(240px,1fr) auto;
+  gap:12px;align-items:center;margin-bottom:24px;
+}
+.search{
+  display:flex;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:999px;padding:12px 18px;min-height:50px;
+  transition:border-color .25s ease,box-shadow .25s ease;
+}
+.search:focus-within{border-color:var(--gold);box-shadow:0 0 0 4px rgba(228,192,106,.14)}
+.search input{
+  width:100%;min-width:0;border:0;outline:0;
+  background:transparent;color:var(--tx);font-weight:600;
+}
+.search input::placeholder{color:#7d88ad}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.chip{
+  border:1px solid var(--line);background:var(--panel);color:var(--mut);
+  padding:10px 16px;min-height:44px;border-radius:999px;
+  font-weight:700;cursor:pointer;transition:.22s ease;
+}
+.chip:hover{transform:translateY(-2px);color:var(--tx)}
+.chip[aria-pressed="true"]{background:var(--yel);border-color:var(--yel);color:#1a1300}
+
+/* Cardápio: grid que se adapta sozinho */
+.menu{
+  list-style:none;margin:0;padding:0;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));
+  gap:clamp(14px,2.5vw,20px);
+}
+.card{
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:clamp(16px,3vw,24px);
+  display:flex;flex-direction:column;
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),border-color .28s ease,box-shadow .28s ease;
+}
+.card::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,210,31,.14) 50%,transparent 70%);
+  transform:translateX(-110%);transition:transform .7s ease;
+}
+.card:hover{transform:translateY(-6px);border-color:rgba(228,192,106,.55);box-shadow:var(--shadow)}
+.card:hover::before{transform:translateX(110%)}
+
+.card-top{
+  display:flex;justify-content:space-between;align-items:start;
+  gap:12px;flex-wrap:wrap;
+}
+.card h3{
+  margin:0;font-size:clamp(1.02rem,2.4vw,1.2rem);
+  overflow-wrap:anywhere;
+}
+.price{
+  color:var(--yel);font-weight:800;white-space:nowrap;
+  font-size:clamp(1rem,2.2vw,1.15rem);
+  text-shadow:0 2px 0 rgba(0,0,0,.3);
+}
+.tag{
+  align-self:flex-start;margin-top:10px;
+  font-size:.7rem;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
+  padding:5px 10px;border-radius:999px;
+  background:rgba(214,59,50,.18);color:#ffb3ac;
+  border:1px solid rgba(214,59,50,.4);
+}
+.tag.mild{background:rgba(255,210,31,.14);color:var(--yel);border-color:rgba(255,210,31,.35)}
+
+.ing-list{
+  list-style:none;margin:14px 0 18px;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:6px 12px;
+}
+.ing-list li{
+  position:relative;padding-left:18px;
+  color:var(--mut);font-size:clamp(.84rem,1.8vw,.92rem);
+}
+.ing-list li::before{
+  content:"";position:absolute;left:0;top:.55em;
+  width:7px;height:7px;border-radius:50%;background:var(--gold);
+}
+
+.wa{
+  margin-top:auto;align-self:start;
+  display:inline-flex;align-items:center;gap:9px;
+  min-height:46px;
+  background:var(--wa);color:#04240f;font-weight:800;text-decoration:none;
+  padding:11px 18px;border-radius:999px;
+  font-size:clamp(.88rem,1.8vw,.95rem);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+.wa:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(37,211,102,.25);filter:brightness(1.05)}
+.wa svg{width:18px;height:18px;fill:currentColor;flex:none}
+
+.empty{
+  display:none;text-align:center;color:var(--mut);
+  border:1px dashed var(--line);border-radius:var(--radius);
+  padding:clamp(26px,5vw,44px) 20px;
+}
+
+/* Galeria */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));
+  gap:clamp(10px,2vw,16px);margin-top:10px;
+}
+.gallery figure{margin:0;overflow:hidden;border-radius:var(--radius);border:1px solid var(--line)}
+.gallery img{
+  width:100%;aspect-ratio:1;object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.8,.2,1),filter .4s ease;
+}
+.gallery figure:hover img{transform:scale(1.07);filter:saturate(1.15)}
+
+/* WhatsApp flutuante */
+.float-wa{
+  position:fixed;
+  right:max(14px,env(safe-area-inset-right));
+  bottom:max(14px,calc(14px + var(--safe-bottom)));
+  z-index:60;
+  width:clamp(54px,12vw,62px);
+  height:clamp(54px,12vw,62px);
+  border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--wa);color:#04240f;text-decoration:none;
+  box-shadow:0 14px 34px rgba(37,211,102,.35);
+  transition:transform .2s ease;
+}
+.float-wa:hover{transform:scale(1.08)}
+.float-wa svg{width:55%;height:55%;fill:currentColor}
+
+footer{
+  text-align:center;color:var(--mut);
+  padding:30px var(--space) calc(50px + var(--safe-bottom));
+  border-top:1px solid rgba(44,63,122,.5);
+  font-size:clamp(.85rem,1.8vw,.95rem);
+}
+footer strong{color:var(--gold)}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.visible{opacity:1;transform:none}
+
+/* Tablets */
+@media(max-width:900px){
+  .toolbar{grid-template-columns:1fr}
+  .filters{justify-content:flex-start}
+}
+
+/* Celulares */
+@media(max-width:700px){
+  .hero{text-align:center}
+  .hero p{margin-inline:auto}
+  .hero-actions{justify-content:center}
+  .hero-photo{width:min(78vw,310px)}
+  .badge{padding:7px 11px}
+  .badge.one{left:-4px}
+  .badge.two{right:-4px}
+  .nav a:not(.nav-cta){display:none}
+  .nav-cta{
+    background:var(--yel);color:#1a1300;
+  }
+  .ing-list{grid-template-columns:1fr}
+  .card-top{align-items:center}
+  .price{font-size:1.05rem}
+}
+
+/* Celulares pequenos */
+@media(max-width:380px){
+  .brand span:last-child{display:none}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .btn,.wa{width:100%;justify-content:center}
+  .filters{width:100%}
+  .chip{flex:1 1 auto;text-align:center}
+}
+
+/* Telas muito grandes */
+@media(min-width:1400px){
+  body{font-size:17px}
+  .menu{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+/* Orientação horizontal em celulares */
+@media(max-height:480px) and (orientation:landscape){
+  .hero{padding-top:28px;padding-bottom:24px;gap:20px}
+  .hero-photo{width:min(38vw,240px)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#cardapio">Ir para o cardápio</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top" aria-label="Pac-Man Lanches – início">
+      <span class="brand-mark" aria-hidden="true"></span>
+      Pac-Man Lanches
+    </a>
+    <nav class="nav" aria-label="Navegação principal">
+        <a href="#cardapio">Cardápio</a>
+        <a href="#galeria">Galeria</a>
+        <a class="nav-cta" href="https://wa.me/5532991246162" target="_blank" rel="noopener">Pedir agora</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div>
+    <span class="eyebrow"><span class="dot"></span> Aberto para pedidos</span>
+    <h1>Pac-Man Lanches</h1>
+    <p>O lanche é sério! Ingredientes selecionados, pão brioche fresquinho e aquele sabor que faz você voltar.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#cardapio">Ver cardápio</a>
+      <a class="btn ghost" href="https://wa.me/5532000000000" target="_blank" rel="noopener">Pedir no WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <img class="hero-photo"
+         src="logopacman.jpg"
+         alt="Hambúrguer artesanal da Pac-Man Lanches">
+    <span class="badge one">🔥 Mais pedidos</span>
+    <span class="badge two">⭐ Qualidade garantida</span>
+  </div>
+</section>
+
+<div class="dots" aria-hidden="true"></div>
+
+<main id="cardapio">
+  <div class="section-head reveal">
+    <div>
+      <h2>Cardápio</h2>
+      <p>Escolha seu Pac favorito e peça direto pelo WhatsApp.</p>
+    </div>
+  </div>
+
+  <div class="toolbar reveal">
+    <label class="search">
+      <span aria-hidden="true">🔍</span>
+      <input id="search" type="search" placeholder="Buscar lanche ou ingrediente..." aria-label="Buscar lanche ou ingrediente">
+    </label>
+
+    <div class="filters" role="group" aria-label="Filtrar cardápio">
+      <button class="chip" data-filter="todos" aria-pressed="true">Todos</button>
+      <button class="chip" data-filter="carne" aria-pressed="false">Carne</button>
+      <button class="chip" data-filter="frango" aria-pressed="false">Frango</button>
+      <button class="chip" data-filter="kids" aria-pressed="false">Kids</button>
+    </div>
+  </div>
+
+  <ul class="menu" id="menu">
+    <!-- 1 -->
+    <li class="card reveal" data-category="kids" data-name="pac kids pão brioche bife cheddar presunto milho tomate batata palha">
+      <div class="card-top">
+        <h3>PAC KIDS</h3>
+        <span class="price">R$ 15,00</span>
+      </div>
+      <span class="tag mild">Ideal para crianças</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
+        <li>Milho</li><li>Tomate</li><li>Batata palha</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20KIDS" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 2 -->
+    <li class="card reveal" data-category="carne" data-name="pac burger pão brioche bife cheddar presunto catupiry milho alface tomate cebola batata palha">
+      <div class="card-top">
+        <h3>PAC BURGUER</h3>
+        <span class="price">R$ 16,00</span>
+      </div>
+      <span class="tag">Clássico</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
+        <li>Catupiry</li><li>Milho</li><li>Alface</li><li>Tomate</li>
+        <li>Cebola</li><li>Batata palha</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20BURGUER" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 3 -->
+    <li class="card reveal" data-category="carne" data-name="pac egg pão brioche bife cheddar presunto catupiry ovo milho tomate alface cebola roxa batata palha">
+      <div class="card-top">
+        <h3>PAC EGG</h3>
+        <span class="price">R$ 16,90</span>
+      </div>
+      <span class="tag">Com ovo</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Bife 100g</li><li>Queijo cheddar</li><li>Presunto</li>
+        <li>Catupiry</li><li>Ovo</li><li>Milho</li><li>Tomate</li>
+        <li>Alface</li><li>Cebola roxa</li><li>Batata palha</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20EGG" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 4 -->
+    <li class="card reveal" data-category="carne" data-name="pac calabresa pão brioche bife cheddar presunto catupiry calabresa cebola roxa milho alface tomate batata palha">
+      <div class="card-top">
+        <h3>PAC CALABRESA</h3>
+        <span class="price">R$ 16,90</span>
+      </div>
+      <span class="tag">Saboroso</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
+        <li>Catupiry</li><li>Calabresa</li><li>Cebola roxa</li><li>Milho</li>
+        <li>Alface</li><li>Tomate</li><li>Batata palha</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20CALABRESA" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 5 -->
+    <li class="card reveal" data-category="carne" data-name="pac calabresa bacon pão brioche bife cheddar presunto catupiry bacon calabresa cebola roxa milho alface tomate batata palha">
+      <div class="card-top">
+        <h3>PAC CALABRESA BACON</h3>
+        <span class="price">R$ 17,90</span>
+      </div>
+      <span class="tag">🔥 Bem recheado</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
+        <li>Catupiry</li><li>Bacon</li><li>Calabresa</li><li>Cebola roxa</li>
+        <li>Milho</li><li>Alface</li><li>Tomate</li><li>Batata palha</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20CALABRESA%20BACON" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 6 -->
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante pão brioche frango cheddar tomate alface cebola roxa">
+      <div class="card-top">
+        <h3>PAC FRANGO CROCANTE</h3>
+        <span class="price">R$ 16,50</span>
+      </div>
+      <span class="tag">Frango crocante</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Frango crocante</li><li>Cheddar</li><li>Tomate</li>
+        <li>Alface</li><li>Cebola roxa</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20FRANGO%20CROCANTE" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 7 -->
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante bacon pão brioche frango cheddar bacon cebola roxa alface batata palha">
+      <div class="card-top">
+        <h3>PAC FRANGO CROCANTE BACON</h3>
+        <span class="price">R$ 18,90</span>
+      </div>
+      <span class="tag">🔥 Bem recheado</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Frango crocante</li><li>Cheddar</li><li>Bacon</li>
+        <li>Cebola roxa</li><li>Alface</li><li>Batata palha</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20FRANGO%20CROCANTE%20BACON" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 8 -->
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante onion pão brioche anéis onion queijo cheddar alface tomate">
+      <div class="card-top">
+        <h3>PAC FRANGO CROCANTE ONION</h3>
+        <span class="price">R$ 19,50</span>
+      </div>
+      <span class="tag">Premium</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>3 anéis de onion</li><li>Queijo cheddar</li>
+        <li>Alface</li><li>Tomate</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20FRANGO%20CROCANTE%20ONION" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 9 -->
+    <li class="card reveal" data-category="carne" data-name="pac bacon pão brioche bife cheddar presunto catupiry alface milho batata palha">
+      <div class="card-top">
+        <h3>PAC BACON</h3>
+        <span class="price">R$ 16,90</span>
+      </div>
+      <span class="tag">Clássico</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
+        <li>Catupiry</li><li>Alface</li><li>Milho</li><li>Batata palha</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20BACON" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+
+    <!-- 10 -->
+    <li class="card reveal" data-category="carne" data-name="pac tudo pão brioche bife cheddar presunto catupiry calabresa ovo cebola roxa">
+      <div class="card-top">
+        <h3>PAC-TUDO</h3>
+        <span class="price">R$ 21,90</span>
+      </div>
+      <span class="tag">⭐ Mais completo</span>
+      <ul class="ing-list">
+        <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
+        <li>Catupiry</li><li>Calabresa</li><li>Ovo</li><li>Cebola roxa</li>
+      </ul>
+      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC-TUDO" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+        Pedir no WhatsApp
+      </a>
+    </li>
+  </ul>
+
+  <div class="empty" id="empty">
+    <h3>Nenhum lanche encontrado</h3>
+    <p>Tente outro nome ou ingrediente.</p>
+  </div>
+
+  <section id="galeria" style="margin-top:64px">
+    <div class="section-head reveal">
+      <div>
+        <h2>Galeria</h2>
+        <p>Uma prévia dos nossos lanches.</p>
+      </div>
+    </div>
+
+    <div class="gallery">
+      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+1" alt="Foto de hambúrguer 1" loading="lazy"></figure>
+      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+2" alt="Foto de hambúrguer 2" loading="lazy"></figure>
+      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+3" alt="Foto de hambúrguer 3" loading="lazy"></figure>
+      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+4" alt="Foto de hambúrguer 4" loading="lazy"></figure>
+    </div>
+  </section>
+</main>
+
+<a class="float-wa"
+   href="https://wa.me/5532991246162?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20no%20Pac-Man%20Lanches."
+   target="_blank" rel="noopener" aria-label="Fazer pedido pelo WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
+</a>
+
+<footer>
+  <p>© 2026 <strong>Pac-Man Lanches</strong>. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+const cards = [...document.querySelectorAll('.card')];
+const search = document.getElementById('search');
+const chips = [...document.querySelectorAll('.chip')];
+const empty = document.getElementById('empty');
+let activeFilter = 'todos';
+
+function applyFilters(){
+  const term = search.value.trim().toLowerCase();
+  let visible = 0;
+
+  cards.forEach(card => {
+    const matchCategory = activeFilter === 'todos' || card.dataset.category === activeFilter;
+    const matchSearch = !term || card.dataset.name.includes(term);
+    const show = matchCategory && matchSearch;
+
+    card.style.display = show ? 'flex' : 'none';
+    if(show) visible++;
+  });
+
+  empty.style.display = visible ? 'none' : 'block';
+}
+
+search.addEventListener('input', applyFilters);
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    chips.forEach(c => c.setAttribute('aria-pressed','false'));
+    chip.setAttribute('aria-pressed','true');
+    activeFilter = chip.dataset.filter;
+    applyFilters();
+  });
+});
+
+/* Animação ao rolar */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if(entry.isIntersecting){
+      entry.target.style.transitionDelay = `${Math.min(i * 60, 240)}ms`;
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
