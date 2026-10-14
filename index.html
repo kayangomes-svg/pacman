@@ -131,7 +131,14 @@ button{font:inherit}
   font-size:clamp(.72rem,1.6vw,.88rem);
   padding:7px 14px;border-radius:999px;margin-bottom:16px;
 }
+.eyebrow.closed{
+  background:rgba(214,59,50,.12);
+  border-color:rgba(214,59,50,.35);
+  color:#ff8b85;
+}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--yel);animation:pulse 1.6s ease-in-out infinite}
+.eyebrow.closed .dot{background:var(--red);animation:none}
+
 @keyframes pulse{50%{opacity:.35;transform:scale(.8)}}
 
 .hero h1{
@@ -161,11 +168,9 @@ button{font:inherit}
 }
 .btn:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(255,210,31,.3)}
 .btn:active{transform:translateY(0) scale(.98)}
-.btn.ghost{
-  background:transparent;color:var(--tx);
-  border:1px solid rgba(246,242,230,.25);box-shadow:none;
+.btn:disabled{
+  background:#4a5578;color:#aab4d8;cursor:not-allowed;box-shadow:none;transform:none;
 }
-.btn.ghost:hover{border-color:var(--gold);color:var(--gold);box-shadow:none}
 
 .hero-visual{position:relative;display:grid;place-items:center}
 .hero-photo{
@@ -300,11 +305,14 @@ h2{
   min-height:46px;
   background:var(--yel);color:#1a1300;font-weight:800;border:0;
   padding:11px 18px;border-radius:999px;cursor:pointer;
-  font-size:clamp(.88rem,1.8vw,.95net);
+  font-size:clamp(.88rem,1.8vw,.95rem);
   box-shadow:0 8px 20px rgba(255,210,31,.2);
   transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
 }
 .add-btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(255,210,31,.3);filter:brightness(1.05)}
+.add-btn:disabled{
+  background:#2c3f7a;color:#aab4d8;cursor:not-allowed;box-shadow:none;transform:none;
+}
 
 .empty{
   display:none;text-align:center;color:var(--mut);
@@ -452,7 +460,7 @@ footer strong{color:var(--gold)}
 
 <section class="hero" id="top">
   <div>
-    <span class="eyebrow"><span class="dot"></span> Aberto para pedidos</span>
+    <span class="eyebrow" id="storeStatusBadge"><span class="dot"></span> Verificando horário...</span>
     <h1>Pac-Man Lanches</h1>
     <p>O lanche é sério! Ingredientes selecionados, pão brioche fresquinho e aquele sabor que faz você voltar.</p>
     <div class="hero-actions">
@@ -656,7 +664,6 @@ footer strong{color:var(--gold)}
       <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+1" alt="Foto de hambúrguer 1" loading="lazy"></figure>
       <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+2" alt="Foto de hambúrguer 2" loading="lazy"></figure>
       <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+3" alt="Foto de hambúrguer 3" loading="lazy"></figure>
-      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+4" alt="Foto de hambúrguer 4" loading="lazy"></figure>
     </div>
   </section>
 </main>
@@ -710,7 +717,7 @@ footer strong{color:var(--gold)}
         <strong id="pixKeyDisplay"></strong>
       </div>
 
-      <button type="submit" class="btn" style="width:100%;justify-content:center;margin-top:8px;">
+      <button type="submit" id="submitBtn" class="btn" style="width:100%;justify-content:center;margin-top:8px;">
         Enviar Pedido no WhatsApp 🚀
       </button>
     </form>
@@ -723,16 +730,65 @@ footer strong{color:var(--gold)}
 
 <script>
 // ==========================================
-// CONFIGURAÇÃO DA CHAVE PIX (Altere aqui quando quiser)
+// CONFIGURAÇÕES GERAIS
 // ==========================================
 const CHAVE_PIX = "32991246162 (Telefone)"; 
 const WHATSAPP_NUMERO = "5532991246162";
 
 document.getElementById('pixKeyDisplay').textContent = CHAVE_PIX;
 
+let isStoreOpen = false;
 let cart = [];
 
+// ==========================================
+// CONTROLE DE HORÁRIO DE BRASÍLIA (18h às 00h)
+// ==========================================
+function checkStoreStatus() {
+  const now = new Date();
+  
+  // Obter a hora atual formatada explicitamente no fuso horário de Brasília (America/Sao_Paulo)
+  const brasiliaTimeString = now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" });
+  const brasiliaDate = new Date(brasiliaTimeString);
+  
+  const currentHour = brasiliaDate.getHours();
+
+  // Aberto das 18:00 até as 23:59 (18 <= hora < 24)
+  isStoreOpen = (currentHour >= 18 && currentHour < 24);
+
+  const badgeEl = document.getElementById('storeStatusBadge');
+  const addButtons = document.querySelectorAll('.add-btn');
+
+  if (isStoreOpen) {
+    badgeEl.className = "eyebrow";
+    badgeEl.innerHTML = `<span class="dot"></span> Aberto para pedidos`;
+    addButtons.forEach(btn => {
+      btn.disabled = false;
+      btn.textContent = "Adicionar ao Carrinho";
+    });
+  } else {
+    badgeEl.className = "eyebrow closed";
+    badgeEl.innerHTML = `<span class="dot"></span> Fechado no momento (Abre às 18h)`;
+    addButtons.forEach(btn => {
+      btn.disabled = true;
+      btn.textContent = "Fechado";
+    });
+  }
+}
+
+// Executa a checagem do horário
+checkStoreStatus();
+// Recheca a cada 1 minuto
+setInterval(checkStoreStatus, 60000);
+
+// ==========================================
+// CARRINHO E CHECKOUT
+// ==========================================
 function addToCart(name, price) {
+  if (!isStoreOpen) {
+    alert('Desculpe, a lanchonete está fechada no momento. Nosso horário de atendimento é das 18:00 às 00:00!');
+    return;
+  }
+
   const existing = cart.find(item => item.name === name);
   if (existing) {
     existing.qty++;
@@ -811,6 +867,12 @@ function handlePaymentChange() {
 
 function checkoutWhatsApp(e) {
   e.preventDefault();
+
+  if (!isStoreOpen) {
+    alert('A loja fechou durante a sua montagem do pedido. Nosso horário de funcionamento é das 18:00 às 00:00.');
+    return;
+  }
+
   const name = document.getElementById('clientName').value.trim();
   const address = document.getElementById('clientAddress').value.trim();
   const payment = document.getElementById('paymentMethod').value;
@@ -836,7 +898,7 @@ function checkoutWhatsApp(e) {
   window.open(url, '_blank');
 }
 
-// Filtros e Busca originais
+// Filtros e Busca
 const cards = [...document.querySelectorAll('.card')];
 const search = document.getElementById('search');
 const chips = [...document.querySelectorAll('.chip')];
