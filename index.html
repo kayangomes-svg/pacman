@@ -168,9 +168,6 @@ button{font:inherit}
 }
 .btn:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(255,210,31,.3)}
 .btn:active{transform:translateY(0) scale(.98)}
-.btn:disabled{
-  background:#4a5578;color:#aab4d8;cursor:not-allowed;box-shadow:none;transform:none;
-}
 
 .hero-visual{position:relative;display:grid;place-items:center}
 .hero-photo{
@@ -284,6 +281,7 @@ h2{
   border:1px solid rgba(214,59,50,.4);
 }
 .tag.mild{background:rgba(255,210,31,.14);color:var(--yel);border-color:rgba(255,210,31,.35)}
+.tag.drink{background:rgba(37,211,102,.14);color:#9ff3b6;border-color:rgba(37,211,102,.35)}
 
 .ing-list{
   list-style:none;margin:14px 0 18px;padding:0;
@@ -307,11 +305,16 @@ h2{
   padding:11px 18px;border-radius:999px;cursor:pointer;
   font-size:clamp(.88rem,1.8vw,.95rem);
   box-shadow:0 8px 20px rgba(255,210,31,.2);
-  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+  transition:all .2s ease;
 }
 .add-btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(255,210,31,.3);filter:brightness(1.05)}
 .add-btn:disabled{
   background:#2c3f7a;color:#aab4d8;cursor:not-allowed;box-shadow:none;transform:none;
+}
+.add-btn.added{
+  background:var(--wa) !important;
+  color:#04240f !important;
+  transform:scale(1.02);
 }
 
 .empty{
@@ -320,18 +323,36 @@ h2{
   padding:clamp(26px,5vw,44px) 20px;
 }
 
-/* Galeria */
-.gallery{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));
-  gap:clamp(10px,2vw,16px);margin-top:10px;
+/* Toast (Aviso Flutuante ao adicionar) */
+.toast-container{
+  position:fixed;
+  top:calc(20px + var(--safe-top));
+  right:20px;
+  z-index:999;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  pointer-events:none;
 }
-.gallery figure{margin:0;overflow:hidden;border-radius:var(--radius);border:1px solid var(--line)}
-.gallery img{
-  width:100%;aspect-ratio:1;object-fit:cover;
-  transition:transform .5s cubic-bezier(.2,.8,.2,1),filter .4s ease;
+.toast{
+  background:var(--wa);
+  color:#04240f;
+  font-weight:800;
+  padding:12px 20px;
+  border-radius:999px;
+  box-shadow:0 10px 30px rgba(37,211,102,.4);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:.92rem;
+  opacity:0;
+  transform:translateY(-20px) scale(.9);
+  transition:all .3s cubic-bezier(.175,.885,.32,1.275);
 }
-.gallery figure:hover img{transform:scale(1.07);filter:saturate(1.15)}
+.toast.show{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
 
 /* Botão Flutuante do Carrinho */
 .cart-float{
@@ -347,6 +368,13 @@ h2{
   transition:transform .2s ease;
 }
 .cart-float:hover{transform:scale(1.05)}
+.cart-float.bounce{
+  animation:cartBounce .4s ease;
+}
+@keyframes cartBounce{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.2)}
+}
 .cart-badge{
   background:#04240f;color:#fff;
   width:24px;height:24px;border-radius:50%;
@@ -445,6 +473,9 @@ footer strong{color:var(--gold)}
 
 <a class="skip-link" href="#cardapio">Ir para o cardápio</a>
 
+<!-- Container de Toast Notification -->
+<div class="toast-container" id="toastContainer"></div>
+
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#top" aria-label="Pac-Man Lanches – início">
@@ -453,7 +484,6 @@ footer strong{color:var(--gold)}
     </a>
     <nav class="nav" aria-label="Navegação principal">
         <a href="#cardapio">Cardápio</a>
-        <a href="#galeria">Galeria</a>
     </nav>
   </div>
 </header>
@@ -490,7 +520,7 @@ footer strong{color:var(--gold)}
   <div class="toolbar reveal">
     <label class="search">
       <span aria-hidden="true">🔍</span>
-      <input id="search" type="search" placeholder="Buscar lanche ou ingrediente..." aria-label="Buscar lanche ou ingrediente">
+      <input id="search" type="search" placeholder="Buscar lanche, cerveja ou bebida..." aria-label="Buscar produto">
     </label>
 
     <div class="filters" role="group" aria-label="Filtrar cardápio">
@@ -498,12 +528,14 @@ footer strong{color:var(--gold)}
       <button class="chip" data-filter="carne" aria-pressed="false">Carne</button>
       <button class="chip" data-filter="frango" aria-pressed="false">Frango</button>
       <button class="chip" data-filter="kids" aria-pressed="false">Kids</button>
+      <button class="chip" data-filter="cerveja" aria-pressed="false">Cervejas</button>
+      <button class="chip" data-filter="bebida" aria-pressed="false">Bebidas</button>
     </div>
   </div>
 
   <ul class="menu" id="menu">
-    <!-- 1 -->
-    <li class="card reveal" data-category="kids" data-name="pac kids pão brioche bife cheddar presunto milho milho batata palha" data-id="pac-kids" data-price="15.00">
+    <!-- LANCHES -->
+    <li class="card reveal" data-category="kids" data-name="pac kids pão brioche bife cheddar presunto milho tomate batata palha">
       <div class="card-top">
         <h3>PAC KIDS</h3>
         <span class="price">R$ 15,00</span>
@@ -513,11 +545,10 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
         <li>Milho</li><li>Tomate</li><li>Batata palha</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC KIDS', 15.00)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC KIDS', 15.00)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 2 -->
-    <li class="card reveal" data-category="carne" data-name="pac burger pão brioche bife cheddar presunto catupiry milho alface tomate cebola batata palha" data-id="pac-burger" data-price="16.00">
+    <li class="card reveal" data-category="carne" data-name="pac burger pão brioche bife cheddar presunto catupiry milho alface tomate cebola batata palha">
       <div class="card-top">
         <h3>PAC BURGUER</h3>
         <span class="price">R$ 16,00</span>
@@ -528,11 +559,10 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Milho</li><li>Alface</li><li>Tomate</li>
         <li>Cebola</li><li>Batata palha</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC BURGUER', 16.00)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC BURGUER', 16.00)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 3 -->
-    <li class="card reveal" data-category="carne" data-name="pac egg pão brioche bife cheddar presunto catupiry ovo milho tomate alface cebola roxa batata palha" data-id="pac-egg" data-price="16.90">
+    <li class="card reveal" data-category="carne" data-name="pac egg pão brioche bife cheddar presunto catupiry ovo milho tomate alface cebola roxa batata palha">
       <div class="card-top">
         <h3>PAC EGG</h3>
         <span class="price">R$ 16,90</span>
@@ -543,11 +573,10 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Ovo</li><li>Milho</li><li>Tomate</li>
         <li>Alface</li><li>Cebola roxa</li><li>Batata palha</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC EGG', 16.90)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC EGG', 16.90)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 4 -->
-    <li class="card reveal" data-category="carne" data-name="pac calabresa pão brioche bife cheddar presunto catupiry calabresa cebola roxa milho alface tomate batata palha" data-id="pac-calabresa" data-price="16.90">
+    <li class="card reveal" data-category="carne" data-name="pac calabresa pão brioche bife cheddar presunto catupiry calabresa cebola roxa milho alface tomate batata palha">
       <div class="card-top">
         <h3>PAC CALABRESA</h3>
         <span class="price">R$ 16,90</span>
@@ -558,11 +587,10 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Calabresa</li><li>Cebola roxa</li><li>Milho</li>
         <li>Alface</li><li>Tomate</li><li>Batata palha</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC CALABRESA', 16.90)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC CALABRESA', 16.90)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 5 -->
-    <li class="card reveal" data-category="carne" data-name="pac calabresa bacon pão brioche bife cheddar presunto catupiry bacon calabresa cebola roxa milho alface tomate batata palha" data-id="pac-calabresa-bacon" data-price="17.90">
+    <li class="card reveal" data-category="carne" data-name="pac calabresa bacon pão brioche bife cheddar presunto catupiry bacon calabresa cebola roxa milho alface tomate batata palha">
       <div class="card-top">
         <h3>PAC CALABRESA BACON</h3>
         <span class="price">R$ 17,90</span>
@@ -573,11 +601,10 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Bacon</li><li>Calabresa</li><li>Cebola roxa</li>
         <li>Milho</li><li>Alface</li><li>Tomate</li><li>Batata palha</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC CALABRESA BACON', 17.90)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC CALABRESA BACON', 17.90)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 6 -->
-    <li class="card reveal" data-category="frango" data-name="pac frango crocante pão brioche frango cheddar tomate alface cebola roxa" data-id="pac-frango-crocante" data-price="16.50">
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante pão brioche frango cheddar tomate alface cebola roxa">
       <div class="card-top">
         <h3>PAC FRANGO CROCANTE</h3>
         <span class="price">R$ 16,50</span>
@@ -587,11 +614,10 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Frango crocante</li><li>Cheddar</li><li>Tomate</li>
         <li>Alface</li><li>Cebola roxa</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC FRANGO CROCANTE', 16.50)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC FRANGO CROCANTE', 16.50)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 7 -->
-    <li class="card reveal" data-category="frango" data-name="pac frango crocante bacon pão brioche frango cheddar bacon cebola roxa alface batata palha" data-id="pac-frango-bacon" data-price="18.90">
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante bacon pão brioche frango cheddar bacon cebola roxa alface batata palha">
       <div class="card-top">
         <h3>PAC FRANGO CROCANTE BACON</h3>
         <span class="price">R$ 18,90</span>
@@ -601,11 +627,10 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Frango crocante</li><li>Cheddar</li><li>Bacon</li>
         <li>Cebola roxa</li><li>Alface</li><li>Batata palha</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC FRANGO CROCANTE BACON', 18.90)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC FRANGO CROCANTE BACON', 18.90)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 8 -->
-    <li class="card reveal" data-category="frango" data-name="pac frango crocante onion pão brioche anéis onion queijo cheddar alface tomate" data-id="pac-frango-onion" data-price="19.50">
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante onion pão brioche anéis onion queijo cheddar alface tomate">
       <div class="card-top">
         <h3>PAC FRANGO CROCANTE ONION</h3>
         <span class="price">R$ 19,50</span>
@@ -615,11 +640,10 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>3 anéis de onion</li><li>Queijo cheddar</li>
         <li>Alface</li><li>Tomate</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC FRANGO CROCANTE ONION', 19.50)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC FRANGO CROCANTE ONION', 19.50)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 9 -->
-    <li class="card reveal" data-category="carne" data-name="pac bacon pão brioche bife cheddar presunto catupiry alface milho batata palha" data-id="pac-bacon" data-price="16.90">
+    <li class="card reveal" data-category="carne" data-name="pac bacon pão brioche bife cheddar presunto catupiry alface milho batata palha">
       <div class="card-top">
         <h3>PAC BACON</h3>
         <span class="price">R$ 16,90</span>
@@ -629,11 +653,10 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
         <li>Catupiry</li><li>Alface</li><li>Milho</li><li>Batata palha</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC BACON', 16.90)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC BACON', 16.90)">Adicionar ao Carrinho</button>
     </li>
 
-    <!-- 10 -->
-    <li class="card reveal" data-category="carne" data-name="pac tudo pão brioche bife cheddar presunto catupiry calabresa ovo cebola roxa" data-id="pac-tudo" data-price="21.90">
+    <li class="card reveal" data-category="carne" data-name="pac tudo pão brioche bife cheddar presunto catupiry calabresa ovo cebola roxa">
       <div class="card-top">
         <h3>PAC-TUDO</h3>
         <span class="price">R$ 21,90</span>
@@ -643,29 +666,136 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
         <li>Catupiry</li><li>Calabresa</li><li>Ovo</li><li>Cebola roxa</li>
       </ul>
-      <button class="add-btn" onclick="addToCart('PAC-TUDO', 21.90)">Adicionar ao Carrinho</button>
+      <button class="add-btn" onclick="addToCart(this, 'PAC-TUDO', 21.90)">Adicionar ao Carrinho</button>
+    </li>
+
+    <!-- CERVEJAS LATÃO -->
+<li class="card reveal" data-category="cerveja" data-name="cerveja brahma latao brahma">
+      <div class="card-top">
+        <h3>BRAHMA (LATÃO)</h3>
+        <span class="price">R$ 8,50</span>
+      </div>
+      <span class="tag drink">Cerveja Gelada</span>
+      <ul class="ing-list">
+        <li>Super Latão 550ml</li><li>Cerveja</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Brahma Latão', 8.50)">Adicionar ao Carrinho</button>
+    </li>
+    
+    <li class="card reveal" data-category="cerveja" data-name="cerveja brahma latao brahma">
+      <div class="card-top">
+        <h3>BRAHMA (LATÃO)</h3>
+        <span class="price">R$ 8,50</span>
+      </div>
+      <span class="tag drink">Cerveja Gelada</span>
+      <ul class="ing-list">
+        <li>Latão 473ml</li><li>Cerveja</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Brahma Latão', 8.50)">Adicionar ao Carrinho</button>
+    </li>
+
+    <li class="card reveal" data-category="cerveja" data-name="cerveja spaten latao spaten">
+      <div class="card-top">
+        <h3>SPATEN (LATÃO)</h3>
+        <span class="price">R$ 10,00</span>
+      </div>
+      <span class="tag drink">Cerveja Gelada</span>
+      <ul class="ing-list">
+        <li>Latão 473ml</li><li>Pilsen puro malte</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Spaten Latão', 10.00)">Adicionar ao Carrinho</button>
+    </li>
+
+    <li class="card reveal" data-category="cerveja" data-name="cerveja heineken latao heineken">
+      <div class="card-top">
+        <h3>HEINEKEN (LATÃO)</h3>
+        <span class="price">R$ 10,00</span>
+      </div>
+      <span class="tag drink">Cerveja Gelada</span>
+      <ul class="ing-list">
+        <li>Latão 473ml</li><li>Premium lager</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Heineken Latão', 10.00)">Adicionar ao Carrinho</button>
+    </li>
+
+    <li class="card reveal" data-category="cerveja" data-name="cerveja imperio latao imperio">
+      <div class="card-top">
+        <h3>IMPÉRIO (LATÃO)</h3>
+        <span class="price">R$ 8,00</span>
+      </div>
+      <span class="tag drink">Cerveja Gelada</span>
+      <ul class="ing-list">
+        <li>Latão 473ml</li><li>Cerveja pilsen</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Império Latão', 8.00)">Adicionar ao Carrinho</button>
+    </li>
+
+    <!-- BEBIDAS E REFRIGERANTES -->
+    <li class="card reveal" data-category="bebida" data-name="guarana antarctica 200ml refrigerante">
+      <div class="card-top">
+        <h3>GUARANÁ ANTARCTICA 200ML</h3>
+        <span class="price">R$ 3,00</span>
+      </div>
+      <span class="tag drink">Gelado</span>
+      <ul class="ing-list">
+        <li>Garrafa 200ml</li><li>Refrigerante de guaraná</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Guaraná Antarctica 200ml', 3.00)">Adicionar ao Carrinho</button>
+    </li>
+ 
+    <li class="card reveal" data-category="bebida" data-name="coca cola 200ml refrigerante">
+      <div class="card-top">
+        <h3>COCA-COLA 200ML</h3>
+        <span class="price">R$ 3,00</span>
+      </div>
+      <span class="tag drink">Gelado</span>
+      <ul class="ing-list">
+        <li>Garrafa 200ml</li><li>Refrigerante Coca-Cola</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Guaraná Antarctica 200ml', 3.00)">Adicionar ao Carrinho</button>
+    </li>
+    
+    <li class="card reveal" data-category="bebida" data-name="suco guaravita copo guaravita">
+      <div class="card-top">
+        <h3>GUARAVITA (COPO)</h3>
+        <span class="price">R$ 3,00</span>
+      </div>
+      <span class="tag drink">Gelado</span>
+      <ul class="ing-list">
+        <li>Copo 290ml</li><li>Bebida natural de guaraná</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Guaravita Copo', 3.00)">Adicionar ao Carrinho</button>
+    </li>
+
+    <li class="card reveal" data-category="bebida" data-name="agua natural sem gas agua">
+      <div class="card-top">
+        <h3>ÁGUA NATURAL S/ GÁS</h3>
+        <span class="price">R$ 3,00</span>
+      </div>
+      <span class="tag drink">Bebida</span>
+      <ul class="ing-list">
+        <li>Garrafa 500ml</li><li>Sem gás</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Água Natural S/ Gás', 3.00)">Adicionar ao Carrinho</button>
+    </li>
+
+    <li class="card reveal" data-category="bebida" data-name="coca cola lata 310ml refrigerante cocacola">
+      <div class="card-top">
+        <h3>COCA-COLA LATA 310ML</h3>
+        <span class="price">R$ 7,00</span>
+      </div>
+      <span class="tag drink">Gelada</span>
+      <ul class="ing-list">
+        <li>Lata 310ml</li><li>Refrigerante de cola</li>
+      </ul>
+      <button class="add-btn" onclick="addToCart(this, 'Coca-Cola Lata 310ml', 7.00)">Adicionar ao Carrinho</button>
     </li>
   </ul>
 
   <div class="empty" id="empty">
-    <h3>Nenhum lanche encontrado</h3>
-    <p>Tente outro nome ou ingrediente.</p>
+    <h3>Nenhum item encontrado</h3>
+    <p>Tente outro nome ou categoria.</p>
   </div>
-
-  <section id="galeria" style="margin-top:64px">
-    <div class="section-head reveal">
-      <div>
-        <h2>Galeria</h2>
-        <p>Uma prévia dos nossos lanches.</p>
-      </div>
-    </div>
-
-    <div class="gallery">
-      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+1" alt="Foto de hambúrguer 1" loading="lazy"></figure>
-      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+2" alt="Foto de hambúrguer 2" loading="lazy"></figure>
-      <figure class="reveal"><img src="https://placehold.co/500x500/12214f/e4c06a?text=Foto+3" alt="Foto de hambúrguer 3" loading="lazy"></figure>
-    </div>
-  </section>
 </main>
 
 <!-- Botão Flutuante do Carrinho -->
@@ -745,14 +875,11 @@ let cart = [];
 // ==========================================
 function checkStoreStatus() {
   const now = new Date();
-  
-  // Obter a hora atual formatada explicitamente no fuso horário de Brasília (America/Sao_Paulo)
   const brasiliaTimeString = now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" });
   const brasiliaDate = new Date(brasiliaTimeString);
   
   const currentHour = brasiliaDate.getHours();
 
-  // Aberto das 18:00 até as 23:59 (18 <= hora < 24)
   isStoreOpen = (currentHour >= 18 && currentHour < 24);
 
   const badgeEl = document.getElementById('storeStatusBadge');
@@ -763,7 +890,9 @@ function checkStoreStatus() {
     badgeEl.innerHTML = `<span class="dot"></span> Aberto para pedidos`;
     addButtons.forEach(btn => {
       btn.disabled = false;
-      btn.textContent = "Adicionar ao Carrinho";
+      if (!btn.classList.contains('added')) {
+        btn.textContent = "Adicionar ao Carrinho";
+      }
     });
   } else {
     badgeEl.className = "eyebrow closed";
@@ -775,15 +904,32 @@ function checkStoreStatus() {
   }
 }
 
-// Executa a checagem do horário
 checkStoreStatus();
-// Recheca a cada 1 minuto
 setInterval(checkStoreStatus, 60000);
+
+// ==========================================
+// NOTIFICAÇÕES & TOAST
+// ==========================================
+function showToast(message) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span>🛒</span> <span>${message}</span>`;
+  container.appendChild(toast);
+
+  // Trigger reflow para ativar animação CSS
+  setTimeout(() => toast.classList.add('show'), 10);
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
 
 // ==========================================
 // CARRINHO E CHECKOUT
 // ==========================================
-function addToCart(name, price) {
+function addToCart(btnElement, name, price) {
   if (!isStoreOpen) {
     alert('Desculpe, a lanchonete está fechada no momento. Nosso horário de atendimento é das 18:00 às 00:00!');
     return;
@@ -795,6 +941,26 @@ function addToCart(name, price) {
   } else {
     cart.push({ name, price, qty: 1 });
   }
+
+  // 1. Notificação Toast
+  showToast(`${name} adicionado!`);
+
+  // 2. Feedback no botão do Card
+  if (btnElement) {
+    btnElement.classList.add('added');
+    btnElement.textContent = "✓ Adicionado!";
+    setTimeout(() => {
+      btnElement.classList.remove('added');
+      btnElement.textContent = "Adicionar ao Carrinho";
+    }, 1200);
+  }
+
+  // 3. Efeito Bounce no Botão Flutuante do Carrinho
+  const cartFloat = document.getElementById('cartFloat');
+  cartFloat.classList.remove('bounce');
+  void cartFloat.offsetWidth; // Trigger reflow
+  cartFloat.classList.add('bounce');
+
   updateCartUI();
 }
 
