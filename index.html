@@ -103,7 +103,7 @@ button{font:inherit}
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.nav{display:flex;gap:6px}
+.nav{display:flex;gap:6px;align-items:center}
 .nav a{
   text-decoration:none;color:var(--mut);font-weight:700;
   font-size:clamp(.82rem,1.5vw,.95rem);
@@ -113,7 +113,7 @@ button{font:inherit}
 }
 .nav a:hover,.nav a:focus-visible{color:#1a1300;background:var(--yel)}
 
-/* Hero fluido */
+/* Hero */
 .hero{
   width:min(100%,1180px);
   margin:auto;
@@ -196,7 +196,7 @@ button{font:inherit}
 main{
   width:min(100%,1180px);
   margin:auto;
-  padding:clamp(34px,6vw,64px) var(--space) clamp(70px,10vw,110px);
+  padding:clamp(34px,6vw,64px) var(--space) clamp(100px,12vw,140px);
 }
 .section-head{
   display:flex;flex-wrap:wrap;align-items:end;
@@ -235,7 +235,7 @@ h2{
 .chip:hover{transform:translateY(-2px);color:var(--tx)}
 .chip[aria-pressed="true"]{background:var(--yel);border-color:var(--yel);color:#1a1300}
 
-/* Cardápio: grid que se adapta sozinho */
+/* Cardápio */
 .menu{
   list-style:none;margin:0;padding:0;
   display:grid;
@@ -294,17 +294,17 @@ h2{
   width:7px;height:7px;border-radius:50%;background:var(--gold);
 }
 
-.wa{
-  margin-top:auto;align-self:start;
-  display:inline-flex;align-items:center;gap:9px;
+.add-btn{
+  margin-top:auto;align-self:stretch;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
   min-height:46px;
-  background:var(--wa);color:#04240f;font-weight:800;text-decoration:none;
-  padding:11px 18px;border-radius:999px;
-  font-size:clamp(.88rem,1.8vw,.95rem);
+  background:var(--yel);color:#1a1300;font-weight:800;border:0;
+  padding:11px 18px;border-radius:999px;cursor:pointer;
+  font-size:clamp(.88rem,1.8vw,.95net);
+  box-shadow:0 8px 20px rgba(255,210,31,.2);
   transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
 }
-.wa:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(37,211,102,.25);filter:brightness(1.05)}
-.wa svg{width:18px;height:18px;fill:currentColor;flex:none}
+.add-btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(255,210,31,.3);filter:brightness(1.05)}
 
 .empty{
   display:none;text-align:center;color:var(--mut);
@@ -325,22 +325,85 @@ h2{
 }
 .gallery figure:hover img{transform:scale(1.07);filter:saturate(1.15)}
 
-/* WhatsApp flutuante */
-.float-wa{
+/* Botão Flutuante do Carrinho */
+.cart-float{
   position:fixed;
-  right:max(14px,env(safe-area-inset-right));
-  bottom:max(14px,calc(14px + var(--safe-bottom)));
+  right:max(16px,env(safe-area-inset-right));
+  bottom:max(16px,calc(16px + var(--safe-bottom)));
   z-index:60;
-  width:clamp(54px,12vw,62px);
-  height:clamp(54px,12vw,62px);
-  border-radius:50%;
-  display:grid;place-items:center;
-  background:var(--wa);color:#04240f;text-decoration:none;
-  box-shadow:0 14px 34px rgba(37,211,102,.35);
+  background:var(--wa);color:#04240f;
+  padding:14px 22px;border-radius:999px;
+  font-weight:800;border:0;cursor:pointer;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 14px 34px rgba(37,211,102,.4);
   transition:transform .2s ease;
 }
-.float-wa:hover{transform:scale(1.08)}
-.float-wa svg{width:55%;height:55%;fill:currentColor}
+.cart-float:hover{transform:scale(1.05)}
+.cart-badge{
+  background:#04240f;color:#fff;
+  width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;font-size:.8rem;
+}
+
+/* Modal do Carrinho / Checkout */
+.modal-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(5,9,20,.85);backdrop-filter:blur(8px);
+  display:none;place-items:center;padding:16px;
+}
+.modal-overlay.active{display:grid}
+.modal{
+  background:linear-gradient(160deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:var(--radius);
+  width:min(100%,500px);max-height:90vh;overflow-y:auto;
+  padding:24px;box-shadow:var(--shadow);position:relative;
+}
+.modal-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:12px;
+}
+.modal-header h3{margin:0;color:var(--gold);font-family:'Bowlby One',Impact,sans-serif;}
+.close-btn{
+  background:transparent;border:0;color:var(--mut);font-size:1.5rem;cursor:pointer;
+}
+.close-btn:hover{color:var(--tx)}
+
+.cart-items{list-style:none;padding:0;margin:0 0 20px;max-height:220px;overflow-y:auto}
+.cart-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid rgba(44,63,122,.3);gap:10px;
+}
+.cart-item-info{flex:1;font-size:.92rem}
+.cart-item-title{font-weight:700}
+.cart-item-price{color:var(--gold);font-size:.85rem}
+.cart-item-controls{display:flex;align-items:center;gap:8px}
+.qty-btn{
+  background:var(--line);color:var(--tx);border:0;width:26px;height:26px;
+  border-radius:50%;cursor:pointer;font-weight:bold;display:grid;place-items:center;
+}
+.qty-btn:hover{background:var(--gold);color:#1a1300}
+
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-weight:700;font-size:.9rem;margin-bottom:6px;color:var(--mut)}
+.form-control{
+  width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--line);
+  border-radius:12px;color:var(--tx);font-family:inherit;font-size:.95rem;outline:0;
+}
+.form-control:focus{border-color:var(--gold)}
+
+.pix-box{
+  background:rgba(228,192,106,.08);border:1px dashed var(--gold);
+  padding:12px;border-radius:12px;margin-bottom:16px;font-size:.9rem;
+  display:none;
+}
+.pix-box strong{color:var(--gold)}
+
+.total-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:1.15rem;font-weight:800;margin:16px 0 20px;padding-top:12px;
+  border-top:1px solid var(--line);
+}
+.total-row span:last-child{color:var(--yel)}
 
 footer{
   text-align:center;color:var(--mut);
@@ -353,13 +416,10 @@ footer strong{color:var(--gold)}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
 .reveal.visible{opacity:1;transform:none}
 
-/* Tablets */
 @media(max-width:900px){
   .toolbar{grid-template-columns:1fr}
   .filters{justify-content:flex-start}
 }
-
-/* Celulares */
 @media(max-width:700px){
   .hero{text-align:center}
   .hero p{margin-inline:auto}
@@ -369,38 +429,7 @@ footer strong{color:var(--gold)}
   .badge.one{left:-4px}
   .badge.two{right:-4px}
   .nav a:not(.nav-cta){display:none}
-  .nav-cta{
-    background:var(--yel);color:#1a1300;
-  }
   .ing-list{grid-template-columns:1fr}
-  .card-top{align-items:center}
-  .price{font-size:1.05rem}
-}
-
-/* Celulares pequenos */
-@media(max-width:380px){
-  .brand span:last-child{display:none}
-  .hero-actions{flex-direction:column;align-items:stretch}
-  .btn,.wa{width:100%;justify-content:center}
-  .filters{width:100%}
-  .chip{flex:1 1 auto;text-align:center}
-}
-
-/* Telas muito grandes */
-@media(min-width:1400px){
-  body{font-size:17px}
-  .menu{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
-
-/* Orientação horizontal em celulares */
-@media(max-height:480px) and (orientation:landscape){
-  .hero{padding-top:28px;padding-bottom:24px;gap:20px}
-  .hero-photo{width:min(38vw,240px)}
-}
-
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .reveal{opacity:1;transform:none}
 }
 </style>
 </head>
@@ -417,7 +446,6 @@ footer strong{color:var(--gold)}
     <nav class="nav" aria-label="Navegação principal">
         <a href="#cardapio">Cardápio</a>
         <a href="#galeria">Galeria</a>
-        <a class="nav-cta" href="https://wa.me/5532991246162" target="_blank" rel="noopener">Pedir agora</a>
     </nav>
   </div>
 </header>
@@ -429,7 +457,6 @@ footer strong{color:var(--gold)}
     <p>O lanche é sério! Ingredientes selecionados, pão brioche fresquinho e aquele sabor que faz você voltar.</p>
     <div class="hero-actions">
       <a class="btn" href="#cardapio">Ver cardápio</a>
-      <a class="btn ghost" href="https://wa.me/5532000000000" target="_blank" rel="noopener">Pedir no WhatsApp</a>
     </div>
   </div>
 
@@ -448,7 +475,7 @@ footer strong{color:var(--gold)}
   <div class="section-head reveal">
     <div>
       <h2>Cardápio</h2>
-      <p>Escolha seu Pac favorito e peça direto pelo WhatsApp.</p>
+      <p>Monte seu carrinho e finalize seu pedido direto pelo WhatsApp.</p>
     </div>
   </div>
 
@@ -468,7 +495,7 @@ footer strong{color:var(--gold)}
 
   <ul class="menu" id="menu">
     <!-- 1 -->
-    <li class="card reveal" data-category="kids" data-name="pac kids pão brioche bife cheddar presunto milho tomate batata palha">
+    <li class="card reveal" data-category="kids" data-name="pac kids pão brioche bife cheddar presunto milho milho batata palha" data-id="pac-kids" data-price="15.00">
       <div class="card-top">
         <h3>PAC KIDS</h3>
         <span class="price">R$ 15,00</span>
@@ -478,14 +505,11 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
         <li>Milho</li><li>Tomate</li><li>Batata palha</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20KIDS" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC KIDS', 15.00)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 2 -->
-    <li class="card reveal" data-category="carne" data-name="pac burger pão brioche bife cheddar presunto catupiry milho alface tomate cebola batata palha">
+    <li class="card reveal" data-category="carne" data-name="pac burger pão brioche bife cheddar presunto catupiry milho alface tomate cebola batata palha" data-id="pac-burger" data-price="16.00">
       <div class="card-top">
         <h3>PAC BURGUER</h3>
         <span class="price">R$ 16,00</span>
@@ -496,14 +520,11 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Milho</li><li>Alface</li><li>Tomate</li>
         <li>Cebola</li><li>Batata palha</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20BURGUER" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC BURGUER', 16.00)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 3 -->
-    <li class="card reveal" data-category="carne" data-name="pac egg pão brioche bife cheddar presunto catupiry ovo milho tomate alface cebola roxa batata palha">
+    <li class="card reveal" data-category="carne" data-name="pac egg pão brioche bife cheddar presunto catupiry ovo milho tomate alface cebola roxa batata palha" data-id="pac-egg" data-price="16.90">
       <div class="card-top">
         <h3>PAC EGG</h3>
         <span class="price">R$ 16,90</span>
@@ -514,14 +535,11 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Ovo</li><li>Milho</li><li>Tomate</li>
         <li>Alface</li><li>Cebola roxa</li><li>Batata palha</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20EGG" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC EGG', 16.90)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 4 -->
-    <li class="card reveal" data-category="carne" data-name="pac calabresa pão brioche bife cheddar presunto catupiry calabresa cebola roxa milho alface tomate batata palha">
+    <li class="card reveal" data-category="carne" data-name="pac calabresa pão brioche bife cheddar presunto catupiry calabresa cebola roxa milho alface tomate batata palha" data-id="pac-calabresa" data-price="16.90">
       <div class="card-top">
         <h3>PAC CALABRESA</h3>
         <span class="price">R$ 16,90</span>
@@ -532,14 +550,11 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Calabresa</li><li>Cebola roxa</li><li>Milho</li>
         <li>Alface</li><li>Tomate</li><li>Batata palha</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20CALABRESA" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC CALABRESA', 16.90)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 5 -->
-    <li class="card reveal" data-category="carne" data-name="pac calabresa bacon pão brioche bife cheddar presunto catupiry bacon calabresa cebola roxa milho alface tomate batata palha">
+    <li class="card reveal" data-category="carne" data-name="pac calabresa bacon pão brioche bife cheddar presunto catupiry bacon calabresa cebola roxa milho alface tomate batata palha" data-id="pac-calabresa-bacon" data-price="17.90">
       <div class="card-top">
         <h3>PAC CALABRESA BACON</h3>
         <span class="price">R$ 17,90</span>
@@ -550,14 +565,11 @@ footer strong{color:var(--gold)}
         <li>Catupiry</li><li>Bacon</li><li>Calabresa</li><li>Cebola roxa</li>
         <li>Milho</li><li>Alface</li><li>Tomate</li><li>Batata palha</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20CALABRESA%20BACON" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC CALABRESA BACON', 17.90)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 6 -->
-    <li class="card reveal" data-category="frango" data-name="pac frango crocante pão brioche frango cheddar tomate alface cebola roxa">
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante pão brioche frango cheddar tomate alface cebola roxa" data-id="pac-frango-crocante" data-price="16.50">
       <div class="card-top">
         <h3>PAC FRANGO CROCANTE</h3>
         <span class="price">R$ 16,50</span>
@@ -567,14 +579,11 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Frango crocante</li><li>Cheddar</li><li>Tomate</li>
         <li>Alface</li><li>Cebola roxa</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20FRANGO%20CROCANTE" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC FRANGO CROCANTE', 16.50)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 7 -->
-    <li class="card reveal" data-category="frango" data-name="pac frango crocante bacon pão brioche frango cheddar bacon cebola roxa alface batata palha">
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante bacon pão brioche frango cheddar bacon cebola roxa alface batata palha" data-id="pac-frango-bacon" data-price="18.90">
       <div class="card-top">
         <h3>PAC FRANGO CROCANTE BACON</h3>
         <span class="price">R$ 18,90</span>
@@ -584,14 +593,11 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Frango crocante</li><li>Cheddar</li><li>Bacon</li>
         <li>Cebola roxa</li><li>Alface</li><li>Batata palha</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20FRANGO%20CROCANTE%20BACON" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC FRANGO CROCANTE BACON', 18.90)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 8 -->
-    <li class="card reveal" data-category="frango" data-name="pac frango crocante onion pão brioche anéis onion queijo cheddar alface tomate">
+    <li class="card reveal" data-category="frango" data-name="pac frango crocante onion pão brioche anéis onion queijo cheddar alface tomate" data-id="pac-frango-onion" data-price="19.50">
       <div class="card-top">
         <h3>PAC FRANGO CROCANTE ONION</h3>
         <span class="price">R$ 19,50</span>
@@ -601,14 +607,11 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>3 anéis de onion</li><li>Queijo cheddar</li>
         <li>Alface</li><li>Tomate</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20FRANGO%20CROCANTE%20ONION" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC FRANGO CROCANTE ONION', 19.50)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 9 -->
-    <li class="card reveal" data-category="carne" data-name="pac bacon pão brioche bife cheddar presunto catupiry alface milho batata palha">
+    <li class="card reveal" data-category="carne" data-name="pac bacon pão brioche bife cheddar presunto catupiry alface milho batata palha" data-id="pac-bacon" data-price="16.90">
       <div class="card-top">
         <h3>PAC BACON</h3>
         <span class="price">R$ 16,90</span>
@@ -618,14 +621,11 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
         <li>Catupiry</li><li>Alface</li><li>Milho</li><li>Batata palha</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC%20BACON" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC BACON', 16.90)">Adicionar ao Carrinho</button>
     </li>
 
     <!-- 10 -->
-    <li class="card reveal" data-category="carne" data-name="pac tudo pão brioche bife cheddar presunto catupiry calabresa ovo cebola roxa">
+    <li class="card reveal" data-category="carne" data-name="pac tudo pão brioche bife cheddar presunto catupiry calabresa ovo cebola roxa" data-id="pac-tudo" data-price="21.90">
       <div class="card-top">
         <h3>PAC-TUDO</h3>
         <span class="price">R$ 21,90</span>
@@ -635,10 +635,7 @@ footer strong{color:var(--gold)}
         <li>Pão brioche</li><li>Bife 90g</li><li>Cheddar</li><li>Presunto</li>
         <li>Catupiry</li><li>Calabresa</li><li>Ovo</li><li>Cebola roxa</li>
       </ul>
-      <a class="wa" href="https://wa.me/5532991246162?text=Quero%20pedir%20o%20PAC-TUDO" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-        Pedir no WhatsApp
-      </a>
+      <button class="add-btn" onclick="addToCart('PAC-TUDO', 21.90)">Adicionar ao Carrinho</button>
     </li>
   </ul>
 
@@ -664,17 +661,182 @@ footer strong{color:var(--gold)}
   </section>
 </main>
 
-<a class="float-wa"
-   href="https://wa.me/5532991246162?text=Ol%C3%A1!%20Quero%20fazer%20um%20pedido%20no%20Pac-Man%20Lanches."
-   target="_blank" rel="noopener" aria-label="Fazer pedido pelo WhatsApp">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a11 11 0 0 1-4.2-2.7 9.4 9.4 0 0 1-2-3.1c-.2-.7-.2-1.3 0-1.8.2-.4.7-1 1-1.2.3-.2.7-.1.9.3l.8 1.6c.1.3.1.5-.1.7l-.5.6c-.2.2-.2.4-.1.6.4.8 1.6 2 2.5 2.4.2.1.4.1.6-.1l.6-.6c.2-.2.4-.2.6-.1l1.6.8c.4.2.5.6.3 1Z"/></svg>
-</a>
+<!-- Botão Flutuante do Carrinho -->
+<button class="cart-float" id="cartFloat" onclick="toggleModal(true)">
+  🛒 Ver Carrinho
+  <span class="cart-badge" id="cartCount">0</span>
+</button>
+
+<!-- Modal de Checkout -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Seu Carrinho</h3>
+      <button class="close-btn" onclick="toggleModal(false)">&times;</button>
+    </div>
+
+    <ul class="cart-items" id="cartItemsList">
+      <!-- Itens inseridos via JS -->
+    </ul>
+
+    <div class="total-row">
+      <span>Total:</span>
+      <span id="cartTotal">R$ 0,00</span>
+    </div>
+
+    <form id="checkoutForm" onsubmit="checkoutWhatsApp(event)">
+      <div class="form-group">
+        <label for="clientName">Seu Nome *</label>
+        <input type="text" id="clientName" class="form-control" required placeholder="Digite seu nome completo">
+      </div>
+
+      <div class="form-group">
+        <label for="clientAddress">Endereço de Entrega (Rua, Número, Bairro) *</label>
+        <textarea id="clientAddress" class="form-control" rows="2" required placeholder="Ex: Rua Principal, 123 - Centro"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentMethod">Forma de Pagamento *</label>
+        <select id="paymentMethod" class="form-control" onchange="handlePaymentChange()" required>
+          <option value="">Selecione...</option>
+          <option value="Pix">Pix</option>
+          <option value="Cartão">Cartão (na entrega)</option>
+          <option value="Dinheiro">Dinheiro (com troco)</option>
+        </select>
+      </div>
+
+      <div class="pix-box" id="pixBox">
+        Faça o Pix para a chave abaixo e envie o comprovante:<br>
+        <strong id="pixKeyDisplay"></strong>
+      </div>
+
+      <button type="submit" class="btn" style="width:100%;justify-content:center;margin-top:8px;">
+        Enviar Pedido no WhatsApp 🚀
+      </button>
+    </form>
+  </div>
+</div>
 
 <footer>
   <p>© 2026 <strong>Pac-Man Lanches</strong>. Todos os direitos reservados.</p>
 </footer>
 
 <script>
+// ==========================================
+// CONFIGURAÇÃO DA CHAVE PIX (Altere aqui quando quiser)
+// ==========================================
+const CHAVE_PIX = "32991246162 (Telefone)"; 
+const WHATSAPP_NUMERO = "5532991246162";
+
+document.getElementById('pixKeyDisplay').textContent = CHAVE_PIX;
+
+let cart = [];
+
+function addToCart(name, price) {
+  const existing = cart.find(item => item.name === name);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ name, price, qty: 1 });
+  }
+  updateCartUI();
+}
+
+function updateQty(name, change) {
+  const item = cart.find(i => i.name === name);
+  if (item) {
+    item.qty += change;
+    if (item.qty <= 0) {
+      cart = cart.filter(i => i.name !== name);
+    }
+  }
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const countEl = document.getElementById('cartCount');
+  const floatEl = document.getElementById('cartFloat');
+  const listEl = document.getElementById('cartItemsList');
+  const totalEl = document.getElementById('cartTotal');
+
+  const totalCount = cart.reduce((sum, i) => sum + i.qty, 0);
+  countEl.textContent = totalCount;
+  floatEl.style.display = totalCount > 0 ? 'flex' : 'none';
+
+  if (cart.length === 0) {
+    listEl.innerHTML = '<li style="text-align:center;color:var(--mut);padding:20px 0;">Seu carrinho está vazio.</li>';
+    totalEl.textContent = 'R$ 0,00';
+    return;
+  }
+
+  let html = '';
+  let total = 0;
+
+  cart.forEach(item => {
+    const subtotal = item.price * item.qty;
+    total += subtotal;
+    html += `
+      <li class="cart-item">
+        <div class="cart-item-info">
+          <div class="cart-item-title">${item.name}</div>
+          <div class="cart-item-price">R$ ${item.price.toFixed(2).replace('.', ',')} un</div>
+        </div>
+        <div class="cart-item-controls">
+          <button type="button" class="qty-btn" onclick="updateQty('${item.name}', -1)">-</button>
+          <span>${item.qty}</span>
+          <button type="button" class="qty-btn" onclick="updateQty('${item.name}', 1)">+</button>
+        </div>
+      </li>
+    `;
+  });
+
+  listEl.innerHTML = html;
+  totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+}
+
+function toggleModal(open) {
+  const modal = document.getElementById('cartModal');
+  if (open && cart.length === 0) {
+    alert('Seu carrinho está vazio!');
+    return;
+  }
+  modal.classList.toggle('active', open);
+}
+
+function handlePaymentChange() {
+  const method = document.getElementById('paymentMethod').value;
+  const pixBox = document.getElementById('pixBox');
+  pixBox.style.display = method === 'Pix' ? 'block' : 'none';
+}
+
+function checkoutWhatsApp(e) {
+  e.preventDefault();
+  const name = document.getElementById('clientName').value.trim();
+  const address = document.getElementById('clientAddress').value.trim();
+  const payment = document.getElementById('paymentMethod').value;
+
+  if (cart.length === 0) return;
+
+  let message = `*NOVO PEDIDO - PAC-MAN LANCHES* 🍔\n\n`;
+  message += `*Cliente:* ${name}\n`;
+  message += `*Endereço:* ${address}\n`;
+  message += `*Pagamento:* ${payment}\n\n`;
+  message += `*ITENS DO PEDIDO:*\n`;
+
+  let total = 0;
+  cart.forEach(item => {
+    const sub = item.price * item.qty;
+    total += sub;
+    message += `• ${item.qty}x ${item.name} - R$ ${sub.toFixed(2).replace('.', ',')}\n`;
+  });
+
+  message += `\n*TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*`;
+
+  const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+}
+
+// Filtros e Busca originais
 const cards = [...document.querySelectorAll('.card')];
 const search = document.getElementById('search');
 const chips = [...document.querySelectorAll('.chip')];
@@ -712,7 +874,6 @@ chips.forEach(chip => {
 const observer = new IntersectionObserver(entries => {
   entries.forEach((entry, i) => {
     if(entry.isIntersecting){
-      entry.target.style.transitionDelay = `${Math.min(i * 60, 240)}ms`;
       entry.target.classList.add('visible');
       observer.unobserve(entry.target);
     }
